@@ -5,6 +5,7 @@
     "main": "bot.js",
     "author": "DayofSolace",
     "dependencies": {
-        "discord.js": "^11.3.2"
+        "discord.js": "^11.3.2",
+        "snekfetch": "^4.0.0"
     }
 }

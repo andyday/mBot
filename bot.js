@@ -7,6 +7,8 @@ const Discord = require('discord.js'),
         disableEveryone: true
     });
 
+
+//// commands collection setup ////
 bot.commands = new Discord.Collection();
 
 fs.readdir('./cmds/', (err, files) => {
@@ -26,12 +28,14 @@ fs.readdir('./cmds/', (err, files) => {
         bot.commands.set(props.help.name, props);
     });
 });
+//// end commands collection setup ////
 
 bot.on('ready', async () => {
     console.log(`==== ${bot.user.username} Bot is online ====`);
-    console.log(bot.commands);
+    // console.log(bot.commands);
 });
 
+//// command running ////
 bot.on('message', async message => {
     if(message.author.bot) return;
     if(message.channel.type === "dm") return;
@@ -45,5 +49,6 @@ bot.on('message', async message => {
     if(cmd) cmd.run(bot, message, args);
     else message.channel.send('Invalid Command!');
 });
+//// end command running ////
 
 bot.login(token);
