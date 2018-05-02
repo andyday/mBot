@@ -1,8 +1,13 @@
 const Discord = require('discord.js'),
-    config = require('./config.json'),
+    auth = require('./config/auth'),
+    config = require('./config/config'),
     fs = require('fs'),
-    token = config.token,
+    token = auth.token,
     prefix = config.prefix,
+    help = config.help,
+    admin = config.admin,
+    helpmsg = require('./core/help'),
+    adminrole = require('./core/admin'),
     bot = new Discord.Client({
         disableEveryone: true
     });
@@ -32,23 +37,35 @@ fs.readdir('./cmds/', (err, files) => {
 
 bot.on('ready', async () => {
     console.log(`==== ${bot.user.username} Bot is online ====`);
-    // console.log(bot.commands);
+    bot.user.setPresence({ game: { name: help }, status: 'idle' });
+    await adminrole(bot);
+    let temp = require('./core/adminrole');
+    console.log(`in bot.js, ${temp.admin} ${temp.adminid}`);
 });
 
 //// command running ////
 bot.on('message', async message => {
-    if(message.author.bot) return;
-    if(message.channel.type === "dm") return;
-    if(!message.content.startsWith(prefix)) return;
+    if (message.author.bot) return;
+    if (message.channel.type === "dm") return;
+    if (message.content === help) {
+        helpmsg.run(bot.commands, message);
+        return;
+    }
+    if (!message.content.startsWith(prefix)) return;
 
     let messageArray = message.content.substring(prefix.length).split(" "),
         command = messageArray[0],
         args = messageArray.slice(1),
-        cmd = bot.commands.get(command);
+        cmd = bot.commands.get(command)
 
-    if(cmd) cmd.run(bot, message, args);
+    if (cmd) cmd.run(bot, message, args);
     else message.channel.send('Invalid Command!');
 });
 //// end command running ////
+
+bot.on('disconnect', () => {
+    bot.user.setPresence({ Game: { name: null }, status: 'offline' });
+    console.log("Bot disconnected. Please restart bot.");
+});
 
 bot.login(token);
