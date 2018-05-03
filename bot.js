@@ -1,13 +1,16 @@
 const Discord = require('discord.js'),
     auth = require('./config/auth'),
-    config = require('./config/config'),
+    prefixjson = require('./config/prefix'),
+    helpjson = require('./config/help'),
+    adminjson = require('./config/admin'),
     fs = require('fs'),
     token = auth.token,
-    prefix = config.prefix,
-    help = config.help,
-    admin = config.admin,
+    prefix = prefixjson.prefix,
+    help = helpjson.help,
+    adminname = adminjson["admin-role-name"],
+    adminid = adminjson["admin-role-id"],
+    adminfnc = require('./core/admin'),
     helpmsg = require('./core/help'),
-    adminrole = require('./core/admin'),
     bot = new Discord.Client({
         disableEveryone: true
     });
@@ -38,9 +41,7 @@ fs.readdir('./cmds/', (err, files) => {
 bot.on('ready', async () => {
     console.log(`==== ${bot.user.username} Bot is online ====`);
     bot.user.setPresence({ game: { name: help }, status: 'idle' });
-    await adminrole(bot);
-    let temp = require('./core/adminrole');
-    console.log(`in bot.js, ${temp.admin} ${temp.adminid}`);
+    await adminfnc(bot);
 });
 
 //// command running ////

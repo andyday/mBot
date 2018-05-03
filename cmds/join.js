@@ -1,5 +1,5 @@
 const session = require('./../core/session'),
-    help = require('./../config/config').help;
+    help = require('./../config/help').help;
 
 module.exports.run = async (bot, message, args) => {
     if (message.member.voiceChannel) {

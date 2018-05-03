@@ -1,8 +1,8 @@
 const fs = require('fs');
 
-let adminrole = require('./AdminRole'),
-    admin = adminrole.admin,
-    adminid = adminrole.adminid;
+let adminjson = require('./../config/admin'),
+    admin = adminjson["admin-role-name"],
+    adminid = adminjson["admin-role-id"];
 
 module.exports = async (bot) => {
     for (let g of bot.guilds) {
@@ -13,7 +13,6 @@ module.exports = async (bot) => {
                     let r = rs[j];
                     if (r.name == admin) {
                         if (r.id == adminid) {
-                            console.log('role is exact same...');
                             foundRole = true;
                             break;
                         }
@@ -22,7 +21,6 @@ module.exports = async (bot) => {
                         break;
                     } else {
                         if (r.id == adminid) {
-                            console.log('editing current role...');
                             r.edit({ name: admin });
                             foundRole = true;
                             break;
@@ -31,10 +29,16 @@ module.exports = async (bot) => {
                 }
             }
             if (!foundRole) {
-                console.log('adding new role...');
+                if (!admin) admin = "musician";
                 let newrole = await g[i].createRole({ name: admin });
-                adminid = newrole.id;
-                
+                // adminid = newrole.id;
+                let jsontemp = {
+                    "admin-role-name": admin,
+                    "admin-role-id": newrole.id
+                }
+                fs.writeFile('./config/admin.json', JSON.stringify(jsontemp, null, 2), err => {
+                    if (err) throw err;
+                });
             }
         }
     }
